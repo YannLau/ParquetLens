@@ -1,0 +1,31 @@
+[build-system]
+requires = ["hatchling>=1.26"]
+build-backend = "hatchling.build"
+
+[project]
+name = "parquet-lens"
+version = "0.1.0"
+description = "A local-first, cross-platform Parquet explorer"
+readme = "README.md"
+license = "MIT"
+license-files = ["LICENSE"]
+requires-python = ">=3.10"
+dependencies = [
+  "fastapi>=0.115,<1",
+  "uvicorn>=0.34,<1",
+  "duckdb>=1.2,<2",
+  "pyarrow>=19,<24",
+]
+
+[project.optional-dependencies]
+dev = ["pytest>=8,<10", "httpx>=0.28,<1"]
+
+[project.scripts]
+parquet-lens = "parquet_lens.cli:main"
+
+[tool.hatch.build.targets.wheel]
+packages = ["parquet_lens"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+

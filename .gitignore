@@ -1,0 +1,78 @@
+# Python environments and bytecode
+.venv*/
+venv/
+env/
+ENV/
+__pycache__/
+*.py[cod]
+*$py.class
+.python-version.local
+
+# Build / packaging output (keep uv.lock for reproducible installations)
+build/
+dist/
+*.egg-info/
+*.egg
+.eggs/
+pip-wheel-metadata/
+
+# Test, coverage, lint and type-check caches
+.pytest_cache/
+.ruff_cache/
+.mypy_cache/
+.pytype/
+.hypothesis/
+.tox/
+.nox/
+.coverage
+.coverage.*
+coverage.xml
+htmlcov/
+test-results/
+playwright-report/
+
+# Runtime files, large local datasets, and query spill
+.parquet-lens/
+parquet-lens-*/
+*.parquet
+*.pq
+*.duckdb
+*.duckdb.wal
+*.duckdb.tmp/
+data/
+uploads/
+spill/
+tmp/
+temp/
+*.log
+*.pid
+
+# Local configuration and credentials
+.env
+.env.*
+!.env.example
+!.env.*.example
+.aws/
+.agents/
+.codex/
+
+# Optional browser tooling
+node_modules/
+.npm/
+
+# Editors and operating-system files
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+.DS_Store
+._*
+Thumbs.db
+Desktop.ini
+
+# Intentionally keep documentation images, LICENSE, and future test fixtures.
+!tests/fixtures/
+!tests/fixtures/**/*.parquet
+!tests/fixtures/**/*.pq
+

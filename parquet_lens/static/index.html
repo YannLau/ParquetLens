@@ -1,0 +1,207 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="theme-color" content="#167563" />
+    <meta
+      name="description"
+      content="本地优先的 Parquet 数据浏览器"
+      data-i18n-content="本地优先的 Parquet 数据浏览器"
+    />
+    <title data-i18n="Parquet Lens · 看清每一层数据">
+      Parquet Lens · 看清每一层数据
+    </title>
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link rel="stylesheet" href="/style.css" />
+    <script src="/i18n.js" defer></script>
+    <script src="/app.js" defer></script>
+  </head>
+  <body>
+    <div id="app"></div>
+    <dialog id="open-dialog" aria-labelledby="open-title">
+      <div class="dialog-head">
+        <div>
+          <span class="eyebrow">YOUR DATA, IN FOCUS</span>
+          <h2 id="open-title">
+            <span data-i18n="打开 Parquet 文件">打开 Parquet 文件</span>
+          </h2>
+        </div>
+        <button
+          class="icon-button"
+          data-action="close-dialog"
+          aria-label="关闭"
+          data-i18n-aria-label="关闭"
+        >
+          ×
+        </button>
+      </div>
+      <button class="upload-zone" data-action="choose-file">
+        <span class="upload-symbol">↥</span
+        ><strong
+          ><span data-i18n="点击选择，或拖拽文件到这里"
+            >点击选择，或拖拽文件到这里</span
+          ></strong
+        ><span
+          ><span data-i18n=".parquet / .pq · 从当前设备上传"
+            >.parquet / .pq · 从当前设备上传</span
+          ></span
+        >
+      </button>
+      <div id="path-section">
+        <div class="divider">
+          <span><span data-i18n="大文件推荐">大文件推荐</span></span>
+        </div>
+        <label for="file-path"
+          ><span data-i18n="直接读取本机文件路径"
+            >直接读取本机文件路径</span
+          ></label
+        >
+        <p class="muted small">
+          <span
+            data-i18n="无需上传或复制文件，适合 GB 级大文件。路径位于运行服务的电脑上。"
+            >无需上传或复制文件，适合 GB
+            级大文件。路径位于运行服务的电脑上。</span
+          >
+        </p>
+        <form id="path-form">
+          <input
+            id="file-path"
+            placeholder="/path/to/your/data.parquet"
+            required
+            autocomplete="off"
+          /><button class="button primary" type="submit">
+            <span data-i18n="打开">打开</span>
+          </button>
+        </form>
+      </div>
+      <p id="open-error" class="inline-error" role="alert"></p>
+      <div class="dialog-foot">
+        <span class="status-dot"></span
+        ><span data-i18n="数据由你运行的服务处理，不发送到第三方。"
+          >数据由你运行的服务处理，不发送到第三方。</span
+        >
+      </div>
+    </dialog>
+    <dialog id="columns-dialog" aria-labelledby="columns-title">
+      <div class="dialog-head">
+        <div>
+          <span class="eyebrow">COLUMN PROJECTION</span>
+          <h2 id="columns-title">
+            <span data-i18n="选择展示字段">选择展示字段</span>
+          </h2>
+        </div>
+        <button
+          class="icon-button"
+          data-action="close-dialog"
+          aria-label="关闭"
+          data-i18n-aria-label="关闭"
+        >
+          ×
+        </button>
+      </div>
+      <p class="muted">
+        <span data-i18n="只读取选中的字段。最多 80 个，宽表建议按需选择。"
+          >只读取选中的字段。最多 80 个，宽表建议按需选择。</span
+        >
+      </p>
+      <input
+        id="column-search"
+        type="search"
+        placeholder="搜索字段名称…"
+        data-i18n-placeholder="搜索字段名称…"
+        aria-label="搜索字段"
+        data-i18n-aria-label="搜索字段"
+      />
+      <div class="column-actions">
+        <button class="text-button" data-action="columns-all">
+          <span data-i18n="选择前 80 项">选择前 80 项</span></button
+        ><button class="text-button" data-action="columns-none">
+          <span data-i18n="清空">清空</span></button
+        ><span id="column-count"></span>
+      </div>
+      <div id="column-options"></div>
+      <div class="dialog-actions">
+        <button class="button" data-action="close-dialog">
+          <span data-i18n="取消">取消</span></button
+        ><button class="button primary" data-action="columns-apply">
+          <span data-i18n="应用字段">应用字段</span>
+        </button>
+      </div>
+    </dialog>
+    <dialog id="filter-dialog" aria-labelledby="filter-title">
+      <div class="dialog-head">
+        <div>
+          <span class="eyebrow">FIND WHAT MATTERS</span>
+          <h2 id="filter-title"><span data-i18n="筛选数据">筛选数据</span></h2>
+        </div>
+        <button
+          class="icon-button"
+          data-action="close-dialog"
+          aria-label="关闭"
+          data-i18n-aria-label="关闭"
+        >
+          ×
+        </button>
+      </div>
+      <p class="muted">
+        <span data-i18n="所有条件同时满足（AND）。筛选值按字段类型匹配。"
+          >所有条件同时满足（AND）。筛选值按字段类型匹配。</span
+        >
+      </p>
+      <div id="filter-options"></div>
+      <button class="text-button add-condition" data-action="filter-add">
+        <span data-i18n="＋ 添加条件">＋ 添加条件</span>
+      </button>
+      <p class="query-note">
+        <span data-i18n="筛选可能扫描文件内容；超时会自动停止。不会修改源文件。"
+          >筛选可能扫描文件内容；超时会自动停止。不会修改源文件。</span
+        >
+      </p>
+      <div class="dialog-actions">
+        <button class="button" data-action="close-dialog">
+          <span data-i18n="取消">取消</span></button
+        ><button class="button primary" data-action="filter-apply">
+          <span data-i18n="应用筛选">应用筛选</span>
+        </button>
+      </div>
+    </dialog>
+    <dialog id="progress-dialog" aria-labelledby="progress-title">
+      <span class="eyebrow">BRING YOUR DATA</span>
+      <h2 id="progress-title">
+        <span data-i18n="正在上传文件">正在上传文件</span>
+      </h2>
+      <p id="upload-name" class="muted"></p>
+      <progress id="upload-progress" max="100" value="0"></progress>
+      <div class="progress-label">
+        <span id="upload-status"
+          ><span data-i18n="准备上传…">准备上传…</span></span
+        ><button class="text-button" data-action="upload-cancel">
+          <span data-i18n="取消上传">取消上传</span>
+        </button>
+      </div>
+      <p class="small muted">
+        <span data-i18n="本机大文件可以使用路径直接打开，省去传输等待。"
+          >本机大文件可以使用路径直接打开，省去传输等待。</span
+        >
+      </p>
+    </dialog>
+    <div id="drawer-backdrop" hidden></div>
+    <aside
+      id="row-drawer"
+      class="row-drawer"
+      aria-label="单行详情"
+      data-i18n-aria-label="单行详情"
+      hidden
+    ></aside>
+    <div id="toast" role="status" aria-live="polite"></div>
+    <div id="drop-overlay" aria-hidden="true">
+      <div class="drop-card">
+        <span>↥</span>
+        <h2><span data-i18n="松开以打开文件">松开以打开文件</span></h2>
+        <p><span data-i18n="让数据清晰可见">让数据清晰可见</span></p>
+      </div>
+    </div>
+    <input id="file-input" type="file" accept=".parquet,.pq" hidden />
+  </body>
+</html>
